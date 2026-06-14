@@ -250,6 +250,9 @@ router.post('/chat', async (req, res) => {
 
     const systemPrompt = `You are Aria, an AI marketing assistant for BrewLux — a premium coffee chain. You help marketers reach customers intelligently. You have access to real customer data. Be concise, warm, and proactive. Always suggest smart next steps. When launching campaigns, confirm the audience, message, and channel BEFORE calling launch_campaign. Refer to amounts in ₹.
 
+Always call the query_customers tool to find the actual count and details of customers matching any criteria. Do not guess, assume, or generate fake customer counts.
+Always refer to the results of previously executed tools in the conversation history rather than asking the user to repeat information or re-running queries unnecessarily.
+
 When a user asks to analyze a campaign's performance or asks "How is my campaign performing?" or "What insights do you have?":
 1. First, call list_campaigns to find matching campaigns if campaignId is not explicitly provided.
 2. Call analyze_campaign_performance with the correct campaignId.
@@ -285,26 +288,54 @@ Use actual campaign data from MongoDB. Do not generate fake numbers.`;
     // Format chat history to Gemini's expected message structure, merging consecutive roles
     let chatHistory = [];
     messages.forEach((msg) => {
-      const role = msg.role === 'assistant' ? 'model' : 'user';
-      let text = '';
-      if (typeof msg.content === 'string') {
-        text = msg.content;
-      } else if (Array.isArray(msg.content)) {
-        text = msg.content
-          .filter(c => c.type === 'text')
-          .map(c => c.text)
-          .join('\n');
-      }
-
-      if (!text) return;
-
-      if (chatHistory.length > 0 && chatHistory[chatHistory.length - 1].role === role) {
-        chatHistory[chatHistory.length - 1].parts[0].text += '\n' + text;
+      if (msg.type === 'tool') {
+        if (msg.status === 'complete') {
+          chatHistory.push({
+            role: 'model',
+            parts: [{
+              functionCall: {
+                name: msg.toolName,
+                args: msg.params || {}
+              }
+            }]
+          });
+          chatHistory.push({
+            role: 'user',
+            parts: [{
+              functionResponse: {
+                name: msg.toolName,
+                response: { result: msg.result }
+              }
+            }]
+          });
+        }
       } else {
-        chatHistory.push({
-          role,
-          parts: [{ text }]
-        });
+        const role = msg.role === 'assistant' ? 'model' : 'user';
+        let text = '';
+        if (typeof msg.content === 'string') {
+          text = msg.content;
+        } else if (Array.isArray(msg.content)) {
+          text = msg.content
+            .filter(c => c.type === 'text')
+            .map(c => c.text)
+            .join('\n');
+        }
+
+        if (!text) return;
+
+        if (
+          chatHistory.length > 0 &&
+          chatHistory[chatHistory.length - 1].role === role &&
+          chatHistory[chatHistory.length - 1].parts[0] &&
+          typeof chatHistory[chatHistory.length - 1].parts[0].text === 'string'
+        ) {
+          chatHistory[chatHistory.length - 1].parts[0].text += '\n' + text;
+        } else {
+          chatHistory.push({
+            role,
+            parts: [{ text }]
+          });
+        }
       }
     });
 

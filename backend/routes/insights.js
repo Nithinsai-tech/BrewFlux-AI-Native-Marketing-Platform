@@ -10,6 +10,11 @@ const router = express.Router();
 const cache = new Map();
 const CACHE_DURATION = 5 * 60 * 1000; // 5 minutes
 
+export const clearInsightsCache = () => {
+  cache.delete('insights_data');
+  console.log('[Cache Invalidation] Insights cache cleared.');
+};
+
 router.get('/', async (req, res) => {
   try {
     // Check in-memory cache first

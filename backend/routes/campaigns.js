@@ -7,6 +7,7 @@ import Customer from '../models/Customer.js';
 import Communication from '../models/Communication.js';
 import { buildMongoQuery } from '../tools/query_customers.js';
 import { personalizeMessage } from '../tools/preview_campaign.js';
+import { clearInsightsCache } from './insights.js';
 
 const router = express.Router();
 
@@ -67,6 +68,11 @@ router.post('/', async (req, res) => {
     });
 
     await campaign.save();
+    clearInsightsCache();
+    const io = req.app.get('io');
+    if (io) {
+      io.emit('campaign_created', campaign);
+    }
     res.status(201).json(campaign);
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -165,6 +171,7 @@ router.post('/:id/launch', async (req, res) => {
     });
 
     // Return immediately
+    clearInsightsCache();
     res.json({ campaignId: campaign._id, totalQueued: totalCount });
   } catch (error) {
     console.error('[Launch Campaign Error]:', error);

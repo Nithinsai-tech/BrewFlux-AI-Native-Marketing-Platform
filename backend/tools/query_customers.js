@@ -76,6 +76,21 @@ export async function query_customers({ rules }) {
     console.log('[Tool - query_customers] Executing MongoDB Query:', JSON.stringify(mongoQuery));
     
     const count = await Customer.countDocuments(mongoQuery);
+    
+    const statsAggregation = await Customer.aggregate([
+      { $match: mongoQuery },
+      {
+        $group: {
+          _id: null,
+          totalRevenue: { $sum: '$totalSpend' },
+          totalOrders: { $sum: '$totalOrders' }
+        }
+      }
+    ]);
+
+    const totalRevenue = statsAggregation[0]?.totalRevenue || 0;
+    const totalOrders = statsAggregation[0]?.totalOrders || 0;
+
     const sample = await Customer.find(mongoQuery)
       .limit(5)
       .select('name email phone city totalOrders totalSpend lastOrderDate tags')
@@ -84,6 +99,8 @@ export async function query_customers({ rules }) {
     return {
       success: true,
       count,
+      totalRevenue,
+      totalOrders,
       sample,
     };
   } catch (error) {

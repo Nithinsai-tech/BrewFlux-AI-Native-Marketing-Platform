@@ -388,11 +388,22 @@ function Assistant({ messages, setMessages }) {
 
     try {
       const chatHistory = [...messages, userMsg]
-        .filter((msg) => msg.role === 'user' || msg.role === 'assistant')
-        .map((msg) => ({
-          role: msg.role,
-          content: msg.content,
-        }));
+        .filter((msg) => msg.role === 'user' || msg.role === 'assistant' || msg.type === 'tool')
+        .map((msg) => {
+          if (msg.type === 'tool') {
+            return {
+              type: 'tool',
+              toolName: msg.toolName,
+              status: msg.status,
+              params: msg.params,
+              result: msg.result,
+            };
+          }
+          return {
+            role: msg.role,
+            content: msg.content,
+          };
+        });
 
       const response = await fetch(`${API_URL}/api/agent/chat`, {
         method: 'POST',

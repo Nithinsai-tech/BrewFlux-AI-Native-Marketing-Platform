@@ -1,6 +1,7 @@
 import express from 'express';
 import Customer from '../models/Customer.js';
 import Order from '../models/Order.js';
+import { clearInsightsCache } from './insights.js';
 
 const router = express.Router();
 
@@ -119,6 +120,11 @@ router.post('/ingest', async (req, res) => {
       results.push({ email: formattedEmail, success: true, id: customer._id });
     }
 
+    clearInsightsCache();
+    const io = req.app.get('io');
+    if (io) {
+      io.emit('data_ingested', { type: 'customers', count: customers.length });
+    }
     res.json({
       message: `Processed ${customers.length} customer records.`,
       results
@@ -181,6 +187,11 @@ router.post('/ingest-orders', async (req, res) => {
       results.push({ orderId: order._id, customerId: customer._id, success: true });
     }
 
+    clearInsightsCache();
+    const io = req.app.get('io');
+    if (io) {
+      io.emit('data_ingested', { type: 'orders', count: orders.length });
+    }
     res.json({
       message: `Processed ${orders.length} order records.`,
       results

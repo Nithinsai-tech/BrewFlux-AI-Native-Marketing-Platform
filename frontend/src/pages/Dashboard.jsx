@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import axios from 'axios';
+import { io } from 'socket.io-client';
 import {
   Users,
   DollarSign,
@@ -33,72 +34,94 @@ function Dashboard() {
   const navigate = useNavigate();
   const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const [countRes, insightsRes, campaignsRes] = await Promise.all([
-          axios.get(`${API_URL}/api/customers/count`),
-          axios.get(`${API_URL}/api/insights`),
-          axios.get(`${API_URL}/api/campaigns`),
-        ]);
+  const fetchData = async (showLoading = false) => {
+    try {
+      if (showLoading) setLoading(true);
+      const [countRes, insightsRes, campaignsRes] = await Promise.all([
+        axios.get(`${API_URL}/api/customers/count`),
+        axios.get(`${API_URL}/api/insights`),
+        axios.get(`${API_URL}/api/campaigns`),
+      ]);
 
-        const totalCustomers = countRes.data.count || 0;
-        const insights = insightsRes.data || {};
-        const campaignsList = campaignsRes.data || [];
+      const totalCustomers = countRes.data.count || 0;
+      const insights = insightsRes.data || {};
+      const campaignsList = campaignsRes.data || [];
 
-        const activeCampaigns = campaignsList.filter(c => c.status === 'running').length;
+      const activeCampaigns = campaignsList.filter(c => c.status === 'running').length;
 
-        const totalRevenue = insights.summary?.totalRevenue || 0;
-        const totalOrders = insights.summary?.totalOrders || 1;
-        const avgOrderValue = Math.round(totalRevenue / totalOrders);
+      const totalRevenue = insights.summary?.totalRevenue || 0;
+      const totalOrders = insights.summary?.totalOrders || 1;
+      const avgOrderValue = Math.round(totalRevenue / totalOrders);
 
-        setStats({
-          totalCustomers,
-          totalRevenue,
-          activeCampaigns,
-          avgOrderValue,
-        });
+      setStats({
+        totalCustomers,
+        totalRevenue,
+        activeCampaigns,
+        avgOrderValue,
+      });
 
-        setRecommendations(insights.insights || insights.recommendations || []);
-        setRecentCampaigns(campaignsList.slice(0, 5));
+      setRecommendations(insights.insights || insights.recommendations || []);
+      setRecentCampaigns(campaignsList.slice(0, 5));
 
-        const channelStats = {
-          whatsapp: { opened: 0, sent: 0, fallback: 78 },
-          email: { opened: 0, sent: 0, fallback: 22 },
-          sms: { opened: 0, sent: 0, fallback: 45 },
-          rcs: { opened: 0, sent: 0, fallback: 65 },
+      const channelStats = {
+        whatsapp: { opened: 0, sent: 0, fallback: 78 },
+        email: { opened: 0, sent: 0, fallback: 22 },
+        sms: { opened: 0, sent: 0, fallback: 45 },
+        rcs: { opened: 0, sent: 0, fallback: 65 },
+      };
+
+      campaignsList.forEach(c => {
+        const ch = c.channel?.toLowerCase();
+        if (channelStats[ch]) {
+          channelStats[ch].opened += (c.stats?.opened || 0);
+          channelStats[ch].sent += (c.stats?.total || 0);
+        }
+      });
+
+      const performanceData = Object.keys(channelStats).map(ch => {
+        const statsObj = channelStats[ch];
+        const rate = statsObj.sent > 0
+          ? Math.round((statsObj.opened / statsObj.sent) * 100)
+          : statsObj.fallback;
+        return {
+          name: ch === 'whatsapp' ? 'WhatsApp' : ch === 'rcs' ? 'RCS' : ch.toUpperCase(),
+          rate,
         };
+      });
 
-        campaignsList.forEach(c => {
-          const ch = c.channel?.toLowerCase();
-          if (channelStats[ch]) {
-            channelStats[ch].opened += (c.stats?.opened || 0);
-            channelStats[ch].sent += (c.stats?.total || 0);
-          }
-        });
+      setChannelPerformance(performanceData);
+      setLoading(false);
+    } catch (err) {
+      console.error('Error fetching dashboard metrics:', err);
+      setError(err.message);
+      setLoading(false);
+    }
+  };
 
-        const performanceData = Object.keys(channelStats).map(ch => {
-          const statsObj = channelStats[ch];
-          const rate = statsObj.sent > 0
-            ? Math.round((statsObj.opened / statsObj.sent) * 100)
-            : statsObj.fallback;
-          return {
-            name: ch === 'whatsapp' ? 'WhatsApp' : ch === 'rcs' ? 'RCS' : ch.toUpperCase(),
-            rate,
-          };
-        });
+  useEffect(() => {
+    // Initial fetch with loading spinner/skeleton
+    fetchData(true);
 
-        setChannelPerformance(performanceData);
-        setLoading(false);
-      } catch (err) {
-        console.error('Error fetching dashboard metrics:', err);
-        setError(err.message);
-        setLoading(false);
-      }
+    // Setup Socket.IO listener for real-time updates
+    const socket = io(API_URL);
+
+    const handleUpdate = () => {
+      console.log('[Socket.IO] Real-time change detected. Refreshing dashboard metrics...');
+      fetchData(false); // Silent fetch in background
     };
 
-    fetchData();
+    socket.on('communication_update', handleUpdate);
+    socket.on('campaign_status_change', handleUpdate);
+    socket.on('campaign_created', handleUpdate);
+    socket.on('data_ingested', handleUpdate);
+
+    return () => {
+      socket.off('communication_update', handleUpdate);
+      socket.off('campaign_status_change', handleUpdate);
+      socket.off('campaign_created', handleUpdate);
+      socket.off('data_ingested', handleUpdate);
+      socket.disconnect();
+    };
   }, []);
 
   const handleLaunchRecommendation = (rec) => {

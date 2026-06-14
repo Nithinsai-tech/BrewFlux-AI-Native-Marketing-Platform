@@ -3,6 +3,7 @@ import Campaign from '../models/Campaign.js';
 import Communication from '../models/Communication.js';
 import Customer from '../models/Customer.js';
 import Order from '../models/Order.js';
+import { clearInsightsCache } from './insights.js';
 
 const router = express.Router();
 
@@ -147,6 +148,7 @@ const handleReceipt = async (req, res) => {
             updatedStats: { stats: updatedStats },
           });
         }
+        clearInsightsCache();
       } catch (err) {
         console.error('[Background Receipt Processing Error]:', err);
       }
