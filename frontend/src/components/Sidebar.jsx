@@ -1,8 +1,12 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { Coffee, MessageSquareText, LayoutDashboard, Users, Megaphone } from 'lucide-react';
 
 function Sidebar() {
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [clickedItem, setClickedItem] = useState(null);
+  const location = useLocation();
+
   const assistantItem = { name: 'AI Assistant', path: '/assistant', icon: MessageSquareText };
   const coreItems = [
     { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
@@ -10,75 +14,110 @@ function Sidebar() {
     { name: 'Campaigns', path: '/campaigns', icon: Megaphone },
   ];
 
-  const linkClass = ({ isActive }) =>
-    `flex items-center gap-3.5 px-4 py-2.5 text-sm font-medium transition-all duration-200 rounded-lg mx-3 border-l-2 ${
-      isActive
-        ? 'bg-amber-500/10 text-amber-500 font-bold border-l-amber-500 shadow-sm shadow-amber-500/5'
-        : 'text-slate-400 hover:text-slate-250 hover:bg-slate-800/30 border-l-transparent'
-    }`;
+  const handleNavClick = (path) => {
+    setClickedItem(path);
+    setTimeout(() => setClickedItem(null), 300);
+  };
+
+  const getNavItemClass = (path) => {
+    const isActive = location.pathname === path;
+    const isClicked = clickedItem === path;
+
+    // Base classes
+    let classes = "cursor-pointer rounded-lg px-3 py-2 flex items-center gap-3 transition-all duration-200 ";
+
+    // Click flash takes precedence, then active, then default/hover
+    if (isClicked) {
+      classes += "bg-amber-500/35 scale-95 text-amber-300";
+    } else if (isActive) {
+      classes += "bg-amber-500/20 border-l-4 border-amber-500 text-amber-400 font-semibold";
+    } else {
+      classes += "text-slate-400 hover:bg-amber-500/10 hover:text-amber-400";
+    }
+
+    return classes;
+  };
 
   return (
-    <aside class="w-64 bg-[#0f172a] text-slate-300 flex flex-col h-full z-20 border-r border-slate-800/80">
+    <aside 
+      className="bg-[#0f172a] text-slate-300 flex flex-col h-full z-20 border-r border-slate-800/80 shrink-0"
+      style={{ 
+        width: isCollapsed ? '60px' : '240px', 
+        transition: 'width 0.3s ease' 
+      }}
+    >
       {/* Brand Header */}
-      <div class="p-6 border-b border-slate-800/60 flex items-center gap-3 shrink-0">
-        <div class="w-10 h-10 rounded-xl bg-amber-600 flex items-center justify-center shadow-lg shadow-amber-600/20 transition-all duration-300 hover:scale-105">
-          <Coffee class="w-5 h-5 text-white stroke-[2.5]" />
+      <div className={`p-4 border-b border-slate-800/60 flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'} gap-3 shrink-0`}>
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-xl bg-amber-600 flex items-center justify-center shadow-lg shadow-amber-600/20 transition-all duration-300 hover:scale-105 shrink-0">
+            <Coffee className="w-5 h-5 text-white stroke-[2.5]" />
+          </div>
+          {!isCollapsed && (
+            <div className="animate-in fade-in duration-200">
+              <h1 className="font-black text-lg tracking-tight text-white leading-tight">
+                BrewLux
+              </h1>
+              <p className="text-[10px] text-amber-500 font-bold uppercase tracking-wider whitespace-nowrap">
+                Premium Coffee Chain
+              </p>
+            </div>
+          )}
         </div>
-        <div>
-          <h1 class="font-black text-lg tracking-tight text-white">
-            BrewLux
-          </h1>
-          <p class="text-[10px] text-amber-500 font-bold uppercase tracking-wider whitespace-nowrap">
-            Premium Coffee Chain
-          </p>
-        </div>
+        <button
+          onClick={() => setIsCollapsed(!isCollapsed)}
+          className="p-1.5 rounded-lg bg-slate-800/60 hover:bg-slate-700/80 text-slate-400 hover:text-white transition-all cursor-pointer shrink-0"
+          title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
+        >
+          <span className="text-sm font-bold leading-none">{isCollapsed ? '→' : '←'}</span>
+        </button>
       </div>
 
       {/* Nav Links Container */}
-      <nav class="flex-1 py-6 flex flex-col justify-start">
+      <nav className="flex-1 py-6 flex flex-col justify-start space-y-6 px-3">
         {/* Group 1: AI Strategic Assistant */}
-        <div class="space-y-4">
-          <span class="px-6 text-[9px] font-black text-slate-500 uppercase tracking-wider block">
-            AI Assistant
-          </span>
-          <NavLink to={assistantItem.path} class={linkClass}>
-            {({ isActive }) => {
+        <div className="space-y-2">
+          {!isCollapsed && (
+            <span className="px-3 text-[9px] font-black text-slate-500 uppercase tracking-wider block">
+              AI Assistant
+            </span>
+          )}
+          <Link 
+            to={assistantItem.path} 
+            className={getNavItemClass(assistantItem.path)}
+            onClick={() => handleNavClick(assistantItem.path)}
+          >
+            {(() => {
               const Icon = assistantItem.icon;
               return (
                 <>
-                  <Icon
-                    class={`w-5 h-5 transition-colors duration-200 ${
-                      isActive ? 'text-amber-500' : 'text-slate-400 group-hover:text-slate-250'
-                    }`}
-                  />
-                  <span>{assistantItem.name}</span>
+                  <Icon className="w-5 h-5 shrink-0" />
+                  {!isCollapsed && <span className="text-sm">{assistantItem.name}</span>}
                 </>
               );
-            }}
-          </NavLink>
+            })()}
+          </Link>
         </div>
 
-        {/* Larger Gap between Groups */}
-        <div class="mt-8 space-y-4">
-          <span class="px-6 text-[9px] font-black text-slate-500 uppercase tracking-wider block">
-            CRM Core
-          </span>
-          <div class="flex flex-col space-y-4">
+        {/* Group 2: CRM Core */}
+        <div className="space-y-2">
+          {!isCollapsed && (
+            <span className="px-3 text-[9px] font-black text-slate-500 uppercase tracking-wider block">
+              CRM Core
+            </span>
+          )}
+          <div className="flex flex-col space-y-2">
             {coreItems.map((item) => {
               const Icon = item.icon;
               return (
-                <NavLink key={item.path} to={item.path} class={linkClass}>
-                  {({ isActive }) => (
-                    <>
-                      <Icon
-                        class={`w-5 h-5 transition-colors duration-200 ${
-                          isActive ? 'text-amber-500' : 'text-slate-400 group-hover:text-slate-250'
-                        }`}
-                      />
-                      <span>{item.name}</span>
-                    </>
-                  )}
-                </NavLink>
+                <Link 
+                  key={item.path} 
+                  to={item.path} 
+                  className={getNavItemClass(item.path)}
+                  onClick={() => handleNavClick(item.path)}
+                >
+                  <Icon className="w-5 h-5 shrink-0" />
+                  {!isCollapsed && <span className="text-sm">{item.name}</span>}
+                </Link>
               );
             })}
           </div>
@@ -86,10 +125,16 @@ function Sidebar() {
       </nav>
 
       {/* Footer Branding */}
-      <div class="p-6 border-t border-slate-800/60 flex flex-col gap-2 shrink-0">
-        <div class="px-2 py-2 rounded-lg bg-slate-800/40 border border-slate-700/50 text-center transition-all duration-300 hover:border-slate-600/50">
-          <span class="text-[9px] text-slate-500 font-black uppercase tracking-wider block">Powered by</span>
-          <span class="text-xs text-amber-500 font-bold tracking-tight">Aria CRM AI</span>
+      <div className="p-4 border-t border-slate-800/60 flex flex-col gap-2 shrink-0">
+        <div className="px-2 py-2 rounded-lg bg-slate-800/40 border border-slate-700/50 text-center transition-all duration-300 hover:border-slate-600/50">
+          {!isCollapsed ? (
+            <>
+              <span className="text-[9px] text-slate-500 font-black uppercase tracking-wider block">Powered by</span>
+              <span className="text-xs text-amber-500 font-bold tracking-tight">Aria CRM AI</span>
+            </>
+          ) : (
+            <span className="text-[10px] text-amber-500 font-bold">Aria</span>
+          )}
         </div>
       </div>
     </aside>
