@@ -7,7 +7,7 @@ import Assistant from './pages/Assistant.jsx';
 import Customers from './pages/Customers.jsx';
 import Campaigns from './pages/Campaigns.jsx';
 import CampaignDetail from './pages/CampaignDetail.jsx';
-import { Bell, CheckCircle, Info, AlertCircle, AlertTriangle } from 'lucide-react';
+import { Bell, CheckCircle, Info, AlertCircle, AlertTriangle, Menu, Coffee } from 'lucide-react';
 
 export const ToastContext = createContext(null);
 
@@ -82,21 +82,45 @@ function App() {
     prevLengthRef.current = chatMessages.length;
   }, [chatMessages]);
 
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
   return (
     <ToastContext.Provider value={{ showToast }}>
-      <div class="flex h-screen bg-[#0f172a] overflow-hidden">
+      <div class="flex h-screen bg-[#0f172a] overflow-hidden relative">
         {/* Sidebar navigation */}
-        <Sidebar />
+        <Sidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
         {/* Main content display */}
         <main class="flex-1 flex flex-col min-w-0 overflow-y-auto relative bg-slate-50 text-slate-800">
+          {/* Mobile top header */}
+          <header class="lg:hidden flex items-center justify-between px-4 py-3 bg-white border-b border-slate-200 shrink-0 z-20">
+            <div class="flex items-center gap-3">
+              <button 
+                onClick={() => setSidebarOpen(true)}
+                class="p-2 -ml-2 rounded-xl text-slate-500 hover:text-slate-850 hover:bg-slate-100 transition-all cursor-pointer"
+              >
+                <Menu class="w-5 h-5" />
+              </button>
+              <div class="flex items-center gap-2">
+                <div class="w-8 h-8 rounded-lg bg-amber-600 flex items-center justify-center shadow-md shadow-amber-600/10">
+                  <Coffee class="w-4 h-4 text-white stroke-[2.5]" />
+                </div>
+                <span class="font-extrabold text-sm text-slate-850 tracking-tight">BrewLux</span>
+              </div>
+            </div>
+            <div class="flex items-center gap-2 px-2.5 py-1 rounded-full bg-emerald-50 border border-emerald-250 text-[9px] font-black text-emerald-600">
+              <span class="w-1 h-1 rounded-full bg-emerald-500 animate-pulse"></span>
+              ACTIVE
+            </div>
+          </header>
+
           {/* Subtle top ambient glow */}
           <div class="absolute top-0 right-1/4 w-96 h-96 bg-amber-600/5 rounded-full blur-3xl pointer-events-none"></div>
 
           {/* Page transition wrapper */}
           <div
             key={location.pathname}
-            class="flex-1 flex flex-col p-6 lg:p-8 max-w-7xl w-full mx-auto z-10 animate-in fade-in slide-in-from-bottom-2 duration-300"
+            class="flex-1 flex flex-col p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto z-10 animate-in fade-in slide-in-from-bottom-2 duration-300"
           >
             <Routes>
               <Route path="/" element={<Navigate to="/assistant" replace />} />

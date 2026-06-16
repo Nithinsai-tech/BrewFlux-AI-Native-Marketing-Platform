@@ -48,7 +48,7 @@ function Campaigns() {
         <div class="overflow-x-auto">
           <table class="w-full text-left border-collapse">
             <thead>
-              <tr class="border-b border-slate-200 text-xs font-bold text-slate-400 uppercase bg-slate-50/20">
+              <tr class="border-b border-slate-200 text-xs font-bold text-slate-400 uppercase bg-slate-50/20 whitespace-nowrap">
                 <th class="py-3 px-4">Campaign Name</th>
                 <th class="py-3 px-4">Segment</th>
                 <th class="py-3 px-4">Channel</th>
@@ -75,20 +75,20 @@ function Campaigns() {
               ) : (
                 campaigns.map((camp) => (
                   <tr key={camp._id} class="hover:bg-slate-50 transition-all group">
-                    <td class="py-4 px-4 font-bold text-slate-800">
+                    <td class="py-4 px-4 font-bold text-slate-800 whitespace-nowrap">
                       <Link to={`/campaigns/${camp._id}`} class="hover:text-amber-600 transition-colors">
                         {camp.name}
                       </Link>
                     </td>
-                    <td class="py-4 px-4 text-slate-600 font-medium">
+                    <td class="py-4 px-4 text-slate-600 font-medium whitespace-nowrap">
                       {camp.segmentId?.name || 'N/A'}
                     </td>
-                    <td class="py-4 px-4">
+                    <td class="py-4 px-4 whitespace-nowrap">
                       <span class="px-2.5 py-0.5 rounded text-xs font-bold bg-slate-100 border border-slate-200 text-slate-600 uppercase">
                         {camp.channel}
                       </span>
                     </td>
-                    <td class="py-4 px-4">
+                    <td class="py-4 px-4 whitespace-nowrap">
                       {camp.status === 'running' ? (
                         <span class="inline-flex items-center gap-1.5 px-2 py-0.5 bg-amber-50 border border-amber-200 text-[10px] font-black text-amber-600 rounded-full uppercase tracking-wider animate-pulse">
                           <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
@@ -111,13 +111,13 @@ function Campaigns() {
                         </span>
                       )}
                     </td>
-                    <td class="py-4 px-4 font-semibold text-slate-700">
+                    <td class="py-4 px-4 font-semibold text-slate-700 whitespace-nowrap">
                       {camp.stats?.total?.toLocaleString() || 0}
                     </td>
-                    <td class="py-4 px-4 text-slate-500 text-xs font-medium">
+                    <td class="py-4 px-4 text-slate-500 text-xs font-medium whitespace-nowrap">
                       {new Date(camp.createdAt).toLocaleDateString()}
                     </td>
-                    <td class="py-4 px-4 text-right">
+                    <td class="py-4 px-4 text-right whitespace-nowrap">
                       <Link to={`/campaigns/${camp._id}`} class="text-slate-400 group-hover:text-amber-600 transition-colors">
                         <ChevronRight class="w-5 h-5 inline" />
                       </Link>

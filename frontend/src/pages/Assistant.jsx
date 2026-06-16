@@ -738,24 +738,24 @@ function Assistant({ messages, setMessages }) {
   return (
     <div class="flex-1 flex flex-col h-full bg-slate-50 text-slate-800">
       {/* Top Header */}
-      <div class="flex items-center justify-between border-b border-slate-200 bg-white px-6 py-4 shadow-sm z-20">
+      <div class="flex items-center justify-between border-b border-slate-200 bg-white px-4 sm:px-6 py-3 sm:py-4 shadow-sm z-20">
         <div class="flex items-center gap-3">
-          <div class="w-9 h-9 rounded-lg bg-amber-50 border border-amber-200/50 flex items-center justify-center">
+          <div class="w-9 h-9 rounded-lg bg-amber-50 border border-amber-200/50 flex items-center justify-center shrink-0">
             <Sparkles class="w-4 h-4 text-amber-600" />
           </div>
           <div>
-            <h2 class="font-bold text-slate-800 text-sm">Campaign Assistant</h2>
-            <p class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Active Agent: Aria</p>
+            <h2 class="font-bold text-slate-800 text-xs sm:text-sm">Campaign Assistant</h2>
+            <p class="text-[9px] sm:text-[10px] text-slate-400 font-bold uppercase tracking-wider">Active Agent: Aria</p>
           </div>
         </div>
-        <div class="flex items-center gap-3">
+        <div class="flex items-center gap-1.5 sm:gap-3">
           {/* Mobile Insights Button */}
           <button
             onClick={() => setShowInsightsDrawer(true)}
-            className="lg:hidden text-xs text-amber-700 bg-amber-50 hover:bg-amber-100 border border-amber-200 transition-colors px-2.5 py-1.5 rounded-lg flex items-center gap-1.5 cursor-pointer font-bold"
+            className="lg:hidden text-[10px] sm:text-xs text-amber-700 bg-amber-50 hover:bg-amber-100 border border-amber-200 transition-colors px-2 py-1.5 rounded-lg flex items-center gap-1 sm:gap-1.5 cursor-pointer font-bold"
           >
-            <Activity class="w-3.5 h-3.5" />
-            Insights
+            <Activity class="w-3 h-3 sm:w-3.5 sm:h-3.5" />
+            <span className="hidden xs:inline">Insights</span>
           </button>
           
           <button
@@ -763,9 +763,10 @@ function Assistant({ messages, setMessages }) {
               setMessages([]);
               sessionStorage.removeItem('aria_chat_history');
             }}
-            className="text-xs text-gray-400 hover:text-red-400 transition-colors px-2 py-1.5 rounded-lg border border-gray-700 hover:border-red-400 cursor-pointer"
+            className="text-[10px] sm:text-xs text-slate-500 hover:text-red-650 hover:bg-red-50 border border-slate-250 hover:border-red-200 transition-colors px-2.5 py-1.5 rounded-lg cursor-pointer font-bold"
           >
-            Clear Chat
+            <span className="hidden xs:inline">Clear Chat</span>
+            <span className="xs:hidden">Clear</span>
           </button>
           <div class="hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 border border-emerald-200 text-[10px] font-bold text-emerald-600">
             <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
@@ -781,47 +782,47 @@ function Assistant({ messages, setMessages }) {
         <div class="flex-1 flex flex-col min-w-0 bg-slate-50 overflow-hidden">
           
           {/* 1. TOP METRICS BAR */}
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 lg:px-6 bg-white border-b border-slate-200/60 shrink-0">
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-4 p-3 sm:p-4 lg:px-6 bg-white border-b border-slate-200/60 shrink-0">
             {/* Customers */}
-            <div class="bg-slate-50/50 border border-slate-200/50 rounded-xl p-3 flex items-center justify-between shadow-sm">
-              <div>
-                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Customers</span>
-                <span class="text-sm font-black text-slate-800 mt-0.5 block">{metrics.customers.toLocaleString()}</span>
+            <div class="bg-slate-50/50 border border-slate-200/50 rounded-xl p-2.5 sm:p-3 flex items-center justify-between shadow-sm min-w-0">
+              <div class="min-w-0">
+                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block truncate">Customers</span>
+                <span class="text-xs sm:text-sm font-black text-slate-800 mt-0.5 block truncate">{metrics.customers.toLocaleString()}</span>
               </div>
-              <div class="w-7 h-7 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0">
+              <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center shrink-0 ml-1">
                 <Users class="w-3.5 h-3.5" />
               </div>
             </div>
 
             {/* Campaigns */}
-            <div class="bg-slate-50/50 border border-slate-200/50 rounded-xl p-3 flex items-center justify-between shadow-sm">
-              <div>
-                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Campaigns</span>
-                <span class="text-sm font-black text-slate-800 mt-0.5 block">{metrics.campaigns}</span>
+            <div class="bg-slate-50/50 border border-slate-200/50 rounded-xl p-2.5 sm:p-3 flex items-center justify-between shadow-sm min-w-0">
+              <div class="min-w-0">
+                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block truncate">Campaigns</span>
+                <span class="text-xs sm:text-sm font-black text-slate-800 mt-0.5 block truncate">{metrics.campaigns}</span>
               </div>
-              <div class="w-7 h-7 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center shrink-0">
+              <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center shrink-0 ml-1">
                 <Rocket class="w-3.5 h-3.5" />
               </div>
             </div>
 
             {/* Revenue */}
-            <div class="bg-slate-50/50 border border-slate-200/50 rounded-xl p-3 flex items-center justify-between shadow-sm">
-              <div>
-                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Revenue</span>
-                <span class="text-sm font-black text-slate-800 mt-0.5 block">{formatCurrency(metrics.revenue)}</span>
+            <div class="bg-slate-50/50 border border-slate-200/50 rounded-xl p-2.5 sm:p-3 flex items-center justify-between shadow-sm min-w-0">
+              <div class="min-w-0">
+                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block truncate">Revenue</span>
+                <span class="text-xs sm:text-sm font-black text-slate-800 mt-0.5 block truncate" title={formatCurrency(metrics.revenue)}>{formatCurrency(metrics.revenue)}</span>
               </div>
-              <div class="w-7 h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0">
+              <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 ml-1">
                 <DollarSign class="w-3.5 h-3.5" />
               </div>
             </div>
 
             {/* Segments */}
-            <div class="bg-slate-50/50 border border-slate-200/50 rounded-xl p-3 flex items-center justify-between shadow-sm">
-              <div>
-                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">Segments</span>
-                <span class="text-sm font-black text-slate-800 mt-0.5 block">{metrics.segments}</span>
+            <div class="bg-slate-50/50 border border-slate-200/50 rounded-xl p-2.5 sm:p-3 flex items-center justify-between shadow-sm min-w-0">
+              <div class="min-w-0">
+                <span class="text-[9px] font-bold text-slate-400 uppercase tracking-wider block truncate">Segments</span>
+                <span class="text-xs sm:text-sm font-black text-slate-800 mt-0.5 block truncate">{metrics.segments}</span>
               </div>
-              <div class="w-7 h-7 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center shrink-0">
+              <div class="w-6 h-6 sm:w-7 sm:h-7 rounded-lg bg-purple-50 text-purple-600 flex items-center justify-center shrink-0 ml-1">
                 <Layers class="w-3.5 h-3.5" />
               </div>
             </div>

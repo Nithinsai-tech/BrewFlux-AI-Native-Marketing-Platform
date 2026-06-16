@@ -37,6 +37,7 @@ function Customers() {
   const [city, setCity] = useState('');
   const [minSpend, setMinSpend] = useState('');
   const [lastOrderDays, setLastOrderDays] = useState('');
+  const [showMobileFilters, setShowMobileFilters] = useState(false);
 
   // Ingestion states
   const [isIngestModalOpen, setIsIngestModalOpen] = useState(false);
@@ -260,8 +261,22 @@ function Customers() {
         </button>
       </div>
 
+      {/* Mobile Filters Toggle Button */}
+      <div class="md:hidden flex justify-between items-center bg-white border border-slate-200 p-3.5 rounded-2xl shadow-sm">
+        <span class="text-xs font-extrabold text-slate-705 text-slate-700 flex items-center gap-1.5">
+          <SlidersHorizontal class="w-4 h-4 text-slate-500" />
+          Filter Profiles
+        </span>
+        <button
+          onClick={() => setShowMobileFilters(!showMobileFilters)}
+          class="px-3 py-1.5 bg-amber-50 hover:bg-amber-100 border border-amber-250 text-amber-700 hover:text-amber-800 text-xs font-bold rounded-xl transition-all cursor-pointer"
+        >
+          {showMobileFilters ? 'Hide Filters' : 'Show Filters'}
+        </button>
+      </div>
+
       {/* Filters Toolbar */}
-      <div class="bg-white border border-slate-200 p-4 rounded-2xl grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 items-end shadow-sm">
+      <div class={`${showMobileFilters ? 'grid' : 'hidden md:grid'} bg-white border border-slate-200 p-4 rounded-2xl grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 items-end shadow-sm animate-in fade-in duration-200`}>
         {/* Search */}
         <div class="space-y-1.5">
           <label class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Search Profile</label>
@@ -333,7 +348,7 @@ function Customers() {
         <div class="overflow-x-auto flex-1">
           <table class="w-full text-left border-collapse">
             <thead>
-              <tr class="border-b border-slate-200 text-xs font-bold text-slate-400 uppercase bg-slate-50/20">
+              <tr class="border-b border-slate-200 text-xs font-bold text-slate-400 uppercase bg-slate-50/20 whitespace-nowrap">
                 <th class="py-3 px-4">Name</th>
                 <th class="py-3 px-4">Email</th>
                 <th class="py-3 px-4">City</th>
@@ -366,15 +381,15 @@ function Customers() {
                       selectedCustomer && selectedCustomer._id === cust._id ? 'bg-amber-50/30' : ''
                     }`}
                   >
-                    <td class="py-3.5 px-4 font-bold text-slate-800">{cust.name}</td>
-                    <td class="py-3.5 px-4 text-slate-600 font-medium">{cust.email}</td>
-                    <td class="py-3.5 px-4 text-slate-600 font-semibold">{cust.city}</td>
-                    <td class="py-3.5 px-4 font-semibold text-slate-700">{cust.totalOrders}</td>
-                    <td class="py-3.5 px-4 text-amber-600 font-bold">₹{cust.totalSpend?.toLocaleString()}</td>
-                    <td class="py-3.5 px-4 text-slate-500 text-xs font-medium">
+                    <td class="py-3.5 px-4 font-bold text-slate-800 whitespace-nowrap">{cust.name}</td>
+                    <td class="py-3.5 px-4 text-slate-600 font-medium whitespace-nowrap">{cust.email}</td>
+                    <td class="py-3.5 px-4 text-slate-600 font-semibold whitespace-nowrap">{cust.city}</td>
+                    <td class="py-3.5 px-4 font-semibold text-slate-700 whitespace-nowrap">{cust.totalOrders}</td>
+                    <td class="py-3.5 px-4 text-amber-600 font-bold whitespace-nowrap">₹{cust.totalSpend?.toLocaleString()}</td>
+                    <td class="py-3.5 px-4 text-slate-500 text-xs font-medium whitespace-nowrap">
                       {cust.lastOrderDate ? new Date(cust.lastOrderDate).toLocaleDateString() : 'N/A'}
                     </td>
-                    <td class="py-3.5 px-4">
+                    <td class="py-3.5 px-4 whitespace-nowrap">
                       <div class="flex flex-wrap gap-1">
                         {cust.tags?.slice(0, 2).map((t, idx) => (
                           <span key={idx} class="px-2 py-0.5 rounded bg-slate-100 text-[10px] text-slate-600 font-semibold border border-slate-200/55">

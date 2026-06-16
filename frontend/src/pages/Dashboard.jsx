@@ -351,7 +351,7 @@ function Dashboard() {
           <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
               <thead>
-                <tr class="border-b border-slate-200 text-xs font-bold text-slate-400 uppercase">
+                <tr class="border-b border-slate-200 text-xs font-bold text-slate-400 uppercase whitespace-nowrap">
                   <th class="py-3 px-3">Name</th>
                   <th class="py-3 px-3">Channel</th>
                   <th class="py-3 px-3">Status</th>
@@ -376,16 +376,16 @@ function Dashboard() {
                       onClick={() => navigate(`/campaigns/${c._id}`)}
                       class="hover:bg-slate-50 transition-all cursor-pointer group"
                     >
-                      <td class="py-3.5 px-3 font-bold text-slate-850 group-hover:text-amber-600 transition-colors">
+                      <td class="py-3.5 px-3 font-bold text-slate-850 group-hover:text-amber-600 transition-colors whitespace-nowrap">
                         {c.name}
                       </td>
-                      <td class="py-3.5 px-3">
+                      <td class="py-3.5 px-3 whitespace-nowrap">
                         <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-semibold bg-slate-100 border border-slate-200 text-slate-600 uppercase">
                           {getChannelIcon(c.channel)}
                           <span class="text-[10px] ml-0.5">{c.channel}</span>
                         </span>
                       </td>
-                      <td class="py-3.5 px-3">
+                      <td class="py-3.5 px-3 whitespace-nowrap">
                         {c.status === 'running' ? (
                           <span class="inline-flex items-center gap-1.5 px-2 py-0.5 bg-amber-50 border border-amber-200 text-[10px] font-black text-amber-600 rounded-full uppercase tracking-wider animate-pulse">
                             <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
@@ -408,10 +408,10 @@ function Dashboard() {
                           </span>
                         )}
                       </td>
-                      <td class="py-3.5 px-3 font-semibold text-slate-700">{sentCount}</td>
-                      <td class="py-3.5 px-3 font-bold text-slate-800">{deliveryRate}%</td>
-                      <td class="py-3.5 px-3 font-bold text-slate-800">{openRate}%</td>
-                      <td class="py-3.5 px-3 text-slate-500 text-xs font-medium">
+                      <td class="py-3.5 px-3 font-semibold text-slate-700 whitespace-nowrap">{sentCount}</td>
+                      <td class="py-3.5 px-3 font-bold text-slate-800 whitespace-nowrap">{deliveryRate}%</td>
+                      <td class="py-3.5 px-3 font-bold text-slate-800 whitespace-nowrap">{openRate}%</td>
+                      <td class="py-3.5 px-3 text-slate-500 text-xs font-medium whitespace-nowrap">
                         {new Date(c.createdAt).toLocaleDateString()}
                       </td>
                     </tr>

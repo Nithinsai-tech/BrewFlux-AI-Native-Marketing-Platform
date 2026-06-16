@@ -662,7 +662,7 @@ function CampaignDetail() {
         <div class="overflow-x-auto">
           <table class="w-full text-left border-collapse">
             <thead>
-              <tr class="border-b border-slate-200 text-xs font-bold text-slate-400 uppercase">
+              <tr class="border-b border-slate-200 text-xs font-bold text-slate-400 uppercase whitespace-nowrap">
                 <th class="py-3 px-3">Customer Name</th>
                 <th class="py-3 px-3">Channel</th>
                 <th class="py-3 px-3">Message Preview</th>
@@ -674,18 +674,18 @@ function CampaignDetail() {
             <tbody class="divide-y divide-slate-100 text-sm">
               {communications.map((comm) => (
                 <tr key={comm._id} class="hover:bg-slate-50 transition-colors">
-                  <td class="py-3.5 px-3 font-bold text-slate-800">
+                  <td class="py-3.5 px-3 font-bold text-slate-800 whitespace-nowrap">
                     {comm.customerId?.name || 'Unknown Shopper'}
                   </td>
-                  <td class="py-3.5 px-3">
-                    <span class="text-[10px] font-black bg-slate-100 text-slate-550 px-2 py-0.5 rounded border border-slate-200 uppercase">
+                  <td class="py-3.5 px-3 whitespace-nowrap">
+                    <span class="text-[10px] font-black bg-slate-100 text-slate-500 px-2 py-0.5 rounded border border-slate-200 uppercase">
                       {campaign.channel}
                     </span>
                   </td>
-                  <td class="py-3.5 px-3 text-slate-600 truncate max-w-xs font-semibold">
+                  <td class="py-3.5 px-3 text-slate-600 truncate max-w-xs font-semibold whitespace-nowrap">
                     {comm.message}
                   </td>
-                  <td class="py-3.5 px-3">
+                  <td class="py-3.5 px-3 whitespace-nowrap">
                     {comm.status === 'converted' ? (
                       <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-black bg-emerald-50 border border-emerald-200 text-emerald-600 uppercase">
                         converted
@@ -712,10 +712,10 @@ function CampaignDetail() {
                       </span>
                     )}
                   </td>
-                  <td class="py-3.5 px-3 text-slate-550 text-xs font-semibold">
+                  <td class="py-3.5 px-3 text-slate-500 text-xs font-semibold whitespace-nowrap">
                     {formatDate(comm.sentAt)}
                   </td>
-                  <td class="py-3.5 px-3 text-slate-550 text-xs font-semibold">
+                  <td class="py-3.5 px-3 text-slate-500 text-xs font-semibold whitespace-nowrap">
                     {new Date(comm.updatedAt).toLocaleString()}
                   </td>
                 </tr>

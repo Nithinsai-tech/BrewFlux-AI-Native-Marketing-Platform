@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Coffee, MessageSquareText, LayoutDashboard, Users, Megaphone } from 'lucide-react';
 
-function Sidebar() {
+function Sidebar({ isOpen, onClose }) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [clickedItem, setClickedItem] = useState(null);
   const location = useLocation();
@@ -16,6 +16,7 @@ function Sidebar() {
 
   const handleNavClick = (path) => {
     setClickedItem(path);
+    if (onClose) onClose();
     setTimeout(() => setClickedItem(null), 300);
   };
 
@@ -39,38 +40,60 @@ function Sidebar() {
   };
 
   return (
-    <aside 
-      className="bg-[#0f172a] text-slate-300 flex flex-col h-full z-20 border-r border-slate-800/80 shrink-0"
-      style={{ 
-        width: isCollapsed ? '60px' : '240px', 
-        transition: 'width 0.3s ease' 
-      }}
-    >
-      {/* Brand Header */}
-      <div className={`p-4 border-b border-slate-800/60 flex items-center ${isCollapsed ? 'justify-center' : 'justify-between'} gap-3 shrink-0`}>
-        <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-amber-600 flex items-center justify-center shadow-lg shadow-amber-600/20 transition-all duration-300 hover:scale-105 shrink-0">
-            <Coffee className="w-5 h-5 text-white stroke-[2.5]" />
-          </div>
-          {!isCollapsed && (
-            <div className="animate-in fade-in duration-200">
-              <h1 className="font-black text-lg tracking-tight text-white leading-tight">
-                BrewLux
-              </h1>
-              <p className="text-[10px] text-amber-500 font-bold uppercase tracking-wider whitespace-nowrap">
-                Premium Coffee Chain
-              </p>
+    <>
+      {/* Mobile Sidebar backdrop overlay */}
+      {isOpen && (
+        <div 
+          onClick={onClose}
+          className="fixed inset-0 bg-slate-950/65 backdrop-blur-sm z-40 lg:hidden animate-in fade-in duration-200"
+        />
+      )}
+
+      <aside 
+        className={`bg-[#0f172a] text-slate-300 flex flex-col h-full border-r border-slate-800/80 shrink-0
+          fixed lg:static inset-y-0 left-0 z-45 lg:z-20 transition-all duration-305
+          ${isOpen ? 'translate-x-0 shadow-2xl' : '-translate-x-full lg:translate-x-0'}
+        `}
+        style={{ 
+          width: (isCollapsed && !isOpen) ? '60px' : '240px', 
+        }}
+      >
+        {/* Brand Header */}
+        <div className={`p-4 border-b border-slate-800/60 flex items-center ${(isCollapsed && !isOpen) ? 'justify-center' : 'justify-between'} gap-3 shrink-0`}>
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-xl bg-amber-600 flex items-center justify-center shadow-lg shadow-amber-600/20 transition-all duration-300 hover:scale-105 shrink-0">
+              <Coffee className="w-5 h-5 text-white stroke-[2.5]" />
             </div>
-          )}
+            {(!isCollapsed || isOpen) && (
+              <div className="animate-in fade-in duration-200">
+                <h1 className="font-black text-lg tracking-tight text-white leading-tight">
+                  BrewLux
+                </h1>
+                <p className="text-[10px] text-amber-500 font-bold uppercase tracking-wider whitespace-nowrap">
+                  Premium Coffee Chain
+                </p>
+              </div>
+            )}
+          </div>
+          
+          {/* Desktop Collapse Button */}
+          <button
+            onClick={() => setIsCollapsed(!isCollapsed)}
+            className="hidden lg:block p-1.5 rounded-lg bg-slate-800/60 hover:bg-slate-700/80 text-slate-400 hover:text-white transition-all cursor-pointer shrink-0"
+            title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
+          >
+            <span className="text-sm font-bold leading-none">{isCollapsed ? '→' : '←'}</span>
+          </button>
+
+          {/* Mobile Close Button */}
+          <button
+            onClick={onClose}
+            className="lg:hidden p-1.5 rounded-lg bg-slate-800/60 hover:bg-slate-700/80 text-slate-400 hover:text-white transition-all cursor-pointer shrink-0"
+            title="Close Sidebar"
+          >
+            <span className="text-sm font-bold leading-none">✕</span>
+          </button>
         </div>
-        <button
-          onClick={() => setIsCollapsed(!isCollapsed)}
-          className="p-1.5 rounded-lg bg-slate-800/60 hover:bg-slate-700/80 text-slate-400 hover:text-white transition-all cursor-pointer shrink-0"
-          title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
-        >
-          <span className="text-sm font-bold leading-none">{isCollapsed ? '→' : '←'}</span>
-        </button>
-      </div>
 
       {/* Nav Links Container */}
       <nav className="flex-1 py-6 flex flex-col justify-start space-y-6 px-3">
@@ -138,6 +161,7 @@ function Sidebar() {
         </div>
       </div>
     </aside>
+    </>
   );
 }
 
