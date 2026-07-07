@@ -1,6 +1,6 @@
-# XenoCRM — AI-Native Marketing CRM Monorepo
+# Brew Flux — AI-Native Marketing CRM Monorepo
 
-XenoCRM is a next-generation **AI-Native Marketing CRM** designed for consumer brands (such as **BrewLux**, our fictional premium coffee chain) to target and message shoppers across WhatsApp, SMS, Email, and RCS.
+Bre Flux is a next-generation **AI-Native Marketing CRM** designed for consumer brands (such as **BrewLux**, our fictional premium coffee chain) to target and message shoppers across WhatsApp, SMS, Email, and RCS.
 
 This monorepo scaffolds the entire mini CRM system:
 1. **Frontend**: React + Vite + Tailwind CSS + Recharts (Dashboard, Customer Explorer, AI Assistant chat, and Campaign Funnel analytics).
