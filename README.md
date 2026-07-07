@@ -1,6 +1,6 @@
 # Brew Flux — AI-Native Marketing CRM Monorepo
 
-Bre Flux is a next-generation **AI-Native Marketing CRM** designed for consumer brands (such as **BrewLux**, our fictional premium coffee chain) to target and message shoppers across WhatsApp, SMS, Email, and RCS.
+Brew Flux is a next-generation **AI-Native Marketing CRM** designed for consumer brands (such as **BrewLux**, our fictional premium coffee chain) to target and message shoppers across WhatsApp, SMS, Email, and RCS.
 
 This monorepo scaffolds the entire mini CRM system:
 1. **Frontend**: React + Vite + Tailwind CSS + Recharts (Dashboard, Customer Explorer, AI Assistant chat, and Campaign Funnel analytics).
@@ -41,7 +41,7 @@ BrewFlux CRM solves this by:
 * Unifying execution and analytics, providing **instant, close-looped feedback** via webhooks and live dashboards.
 
 ### Why it is AI-Native
-Unlike legacy platforms that add AI as an afterthought (e.g., a simple textbox for copy generation), BrewFlux CRM is **AI-native**. It embeds the AI assistant (**Maya**) directly into the operational loop. Using advanced **Tool Calling (Function Calling)**:
+Unlike legacy platforms that add AI as an afterthought (e.g., a simple textbox for copy generation), BrewFlux CRM is **AI-native**. It embeds the AI assistant (**Aria**) directly into the operational loop. Using advanced **Tool Calling (Function Calling)**:
 1. The AI understands natural language goals (e.g., *"Find VIP customers who haven't ordered recently and send them a discount"*).
 2. It dynamically queries the database, creates target segments, and defines Mongoose aggregation filters.
 3. It drafts personalized copy adjusted to the character limits and rich-media features of each communication channel.
